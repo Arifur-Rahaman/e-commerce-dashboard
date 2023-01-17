@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { makeUpdateRequest } from '../utils/makeUpdateRequest';
 import { message } from 'antd';
 import { getErrorMessage } from '../utils/getErrorMessage';
+import { makeAddRequest } from '../utils/makeAddRequest';
 const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -43,6 +44,31 @@ const ProductForm = ({ data, page }) => {
                         key,
                         type: 'success',
                         content: 'Product updated!',
+                        duration: 2,
+                    });
+                }
+            } catch (error) {
+                setLoading(false)
+                const message = getErrorMessage(error)
+                messageApi.open({
+                    key,
+                    type: 'error',
+                    content: message,
+                    duration: 2,
+                })
+            }
+        }
+
+        //Handling product add
+        if (page === 'productAdd') {
+            try {
+                const res = await makeAddRequest(value)
+                if (res) {
+                    setLoading(false)
+                    messageApi.open({
+                        key,
+                        type: 'success',
+                        content: 'Product Added!',
                         duration: 2,
                     });
                 }

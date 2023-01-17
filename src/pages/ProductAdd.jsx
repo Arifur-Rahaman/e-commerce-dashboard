@@ -1,8 +1,9 @@
 import React from 'react'
+import ProductForm from '../components/ProductForm'
 function ProductAdd() {
-  return (
-        <h1>Add product</h1>
-  )
+    return (
+        <ProductForm data={false} page={'productAdd'} />
+    )
 }
 
 export default ProductAdd
