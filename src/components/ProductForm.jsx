@@ -4,9 +4,11 @@ import { makeUpdateRequest } from '../utils/makeUpdateRequest';
 import { message } from 'antd';
 import { getErrorMessage } from '../utils/getErrorMessage';
 import { makeAddRequest } from '../utils/makeAddRequest';
+import { useNavigate } from 'react-router-dom';
+import { Typography } from 'antd';
+
 const layout = {
     labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
 };
 
 /* eslint-disable no-template-curly-in-string */
@@ -21,9 +23,9 @@ const validateMessages = {
     },
 };
 const ProductForm = ({ data, page }) => {
-    const [messageApi, contextHolder] = message.useMessage();
-    const key = 'updatable';
+    const { Title } = Typography;
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
     const [product] = useState(data || {
         title: '',
         price: '',
@@ -40,53 +42,35 @@ const ProductForm = ({ data, page }) => {
                 const res = await makeUpdateRequest(value, data.id)
                 if (res) {
                     setLoading(false)
-                    messageApi.open({
-                        key,
-                        type: 'success',
-                        content: 'Product updated!',
-                        duration: 2,
-                    });
+                    message.success('Updated successfully!')
+                    navigate('/products')
                 }
             } catch (error) {
                 setLoading(false)
-                const message = getErrorMessage(error)
-                messageApi.open({
-                    key,
-                    type: 'error',
-                    content: message,
-                    duration: 2,
-                })
+                message.error(getErrorMessage(error)) 
             }
         }
 
         //Handling product add
-        if (page === 'productAdd') {
+        else if (page === 'productAdd') {
             try {
                 const res = await makeAddRequest(value)
                 if (res) {
                     setLoading(false)
-                    messageApi.open({
-                        key,
-                        type: 'success',
-                        content: 'Product Added!',
-                        duration: 2,
-                    });
+                    message.success("Added successfully")
+                    navigate('/products')
                 }
             } catch (error) {
                 setLoading(false)
-                const message = getErrorMessage(error)
-                messageApi.open({
-                    key,
-                    type: 'error',
-                    content: message,
-                    duration: 2,
-                })
+                message.error(getErrorMessage(error))
             }
         }
     };
     return (
-        <>
-            {contextHolder}
+        <div style={{maxWidth:'760px', margin:'0 auto'}}>
+            <Title level={2} style={{ paddingBottom: '16px' }}>
+                {page === 'productAdd' ? `Add Product` : `Update Product`}
+            </Title>
             <Form
                 {...layout}
                 layout="vertical"
@@ -103,7 +87,7 @@ const ProductForm = ({ data, page }) => {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input/>
                 </Form.Item>
                 <Form.Item shouldUpdate
                     name="price"
@@ -117,19 +101,8 @@ const ProductForm = ({ data, page }) => {
                     <Input type='number' />
                 </Form.Item>
                 <Form.Item shouldUpdate
-                    name="description"
-                    label="Description"
-                    rules={[
-                        {
-                            required: true
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item shouldUpdate
                     name="image"
-                    label="Image"
+                    label="Image URL"
                     rules={[
                         {
                             required: true
@@ -149,13 +122,24 @@ const ProductForm = ({ data, page }) => {
                 >
                     <Input />
                 </Form.Item>
+                <Form.Item shouldUpdate
+                    name="description"
+                    label="Description"
+                    rules={[
+                        {
+                            required: true
+                        },
+                    ]}
+                >
+                    <Input.TextArea rows={4} />
+                </Form.Item>
                 {
                     page === 'productEdit'
-                        ?(<Button type="primary" htmlType="submit" loading={loading}>Update</Button>)
+                        ? (<Button type="primary" htmlType="submit" loading={loading}>Update</Button>)
                         : (<Button type="primary" htmlType="submit" loading={loading}>Add</Button>)
                 }
             </Form>
-        </>
+        </div>
     );
 };
 export default ProductForm;

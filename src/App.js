@@ -6,15 +6,17 @@ import DashboardLayout from "./components/DashboardLayout";
 import ProductEdit from "./pages/ProductEdit";
 function App() {
   return (
+  <>
     <DashboardLayout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="products" element={<ProductsList/>} />
-        <Route path="products/:id" element={<ProductEdit/>} />
+        <Route path="products" element={<ProductsList />} />
+        <Route path="products/:id" element={<ProductEdit />} />
         <Route path="addProduct" element={<ProductAdd />} />
       </Routes>
     </DashboardLayout>
+  </>
   );
 }
 

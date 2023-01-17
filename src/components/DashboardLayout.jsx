@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -9,21 +9,47 @@ import {
 
 import { BsHandbag } from "react-icons/bs";
 import { Layout, Menu, theme } from 'antd';
+import logo from '../assets/images/logo.png'
 const { Header, Sider, Content } = Layout;
-function DashboardLayout({children}) {
+function DashboardLayout({ children }) {
+    const [selected, setSelected] = useState('dashboard')
     const navigate = useNavigate()
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const location = window.location.pathname
+    useEffect(()=>{
+        switch(location){
+            case "/":
+                setSelected('dashboard')
+              break;
+            case "/dashboard":
+                setSelected('dashboard')
+              break;
+            case "/products":
+                setSelected('products')
+              break;
+            case "/addProduct":
+                setSelected('addProduct')
+              break;
+              default:
+                setSelected(2)
+              break
+        }
+    },[location])
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
-                <div className="logo" />
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                    <img style={{ width: '64px' }} src={logo} alt='logo' />
+                </div>
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['dashboard']}
+                    defaultSelectedKeys={[selected]}
+                    selectedKeys={[selected]}
                     items={[
                         {
                             key: 'dashboard',
@@ -47,11 +73,12 @@ function DashboardLayout({children}) {
                 />
             </Sider>
             <Layout className="site-layout">
-                <Header style={{ padding: 0, background: colorBgContainer }}>
-                    {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                        className: 'trigger',
-                        onClick: () => setCollapsed(!collapsed),
-                    })}
+                <Header style={{ paddingLeft: '8px', background: colorBgContainer }}>
+                    {
+                        collapsed
+                            ? <MenuFoldOutlined style={{ fontSize: '150%'}} onClick={() => setCollapsed(!collapsed)} />
+                            : <MenuUnfoldOutlined style={{ fontSize: '150%'}} onClick={() => setCollapsed(!collapsed)}/>
+                    }
                 </Header>
                 <Content
                     style={{
